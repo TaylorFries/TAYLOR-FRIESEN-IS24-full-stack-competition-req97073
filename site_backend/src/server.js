@@ -21,6 +21,13 @@ app.get('/', (req, res) => res.status(200).send({
     message: "Server is running"
 }));
 
+app.post('/read', async (req, res, next) => {
+    const resJson = JSON.stringify(data);
+    console.log("*************************************")
+    WriteTextToFileAsync(resJson);
+    res.json(resJson);
+});
+
 const WriteTextToFileAsync = async (toWrite) => {
     fs.writeFile('./src/product-content.json', toWrite, (err) => {
         if (err){

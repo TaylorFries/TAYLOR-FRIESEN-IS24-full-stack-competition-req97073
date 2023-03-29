@@ -9,13 +9,6 @@ const HomePage = () => {
     //used to get product data from file
     const [productData, setProducts] = useState([]);
 
-    useEffect(() => {
-        axios.get("/read")
-        .then((res) => setProducts(res.data))//console.log(res.data))
-        .catch(err => console.log(err))
-        
-    }, []);
-
     //used to save the state when trying to add a product
     const [addFormData, setAddFormData] = useState({
         productName: '',
@@ -55,6 +48,19 @@ const HomePage = () => {
         //save the change
         setAddFormData(newFormData);
     };
+
+
+    const handleLoadClick = () => {
+        const url = 'http://localhost:8000/read';
+        axios.post(url, )
+        .then((res) => {
+            const jsonIn = JSON.parse(res.data);
+            console.log(jsonIn);
+            setProducts(jsonIn);
+        });
+
+        
+    }
 
     const handleEditFormChange = (event) => {
         event.preventDefault();
@@ -150,6 +156,7 @@ const HomePage = () => {
         <>
             <div className="App">
                 <form onSubmit={handleEditFormSubmit}>
+                    <button onClick={() => handleLoadClick()}>Load Products</button>
                     <table>
                         <thead>
                             <tr>
