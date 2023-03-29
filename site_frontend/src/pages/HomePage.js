@@ -52,15 +52,12 @@ const HomePage = () => {
 
     const handleLoadClick = () => {
         const url = 'http://localhost:8000/read';
-        axios.post(url, )
+        axios.post(url)
         .then((res) => {
             const jsonIn = JSON.parse(res.data);
-            console.log(jsonIn);
             setProducts(jsonIn);
         });
-
-        
-    }
+    };
 
     const handleEditFormChange = (event) => {
         event.preventDefault();
@@ -145,7 +142,7 @@ const HomePage = () => {
     }
 
     const updateJson = (products) => {
-        const url = 'http://localhost:8000/write';
+        const url = 'http://localhost:8000/update';
         axios.post(url, products)
         .then(response => {
             console.log("This is the response", response);
@@ -154,41 +151,8 @@ const HomePage = () => {
 
     return (
         <>
+        <button onClick={() => handleLoadClick()}>Load Products</button>
             <div className="App">
-                <form onSubmit={handleEditFormSubmit}>
-                    <button onClick={() => handleLoadClick()}>Load Products</button>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Product Name</th>
-                                <th>Product Owner</th>
-                                <th>Developers</th>
-                                <th>Scrum Master</th>
-                                <th>Start Date</th>
-                                <th>Methodology</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {productData.map((val) => (
-                                <Fragment>
-                                    {editProductId === val.productId ? (
-                                        <EditRow
-                                            editFormData={editFormData}
-                                            handleEditFormChange={handleEditFormChange}
-                                        />
-                                    ) : (
-                                        <ReadOnlyRow
-                                            val={val}
-                                            handleEditClick={handleEditClick}
-                                            handleDeleteClick={handleDeleteClick}
-                                        />
-                                    )}
-                                </Fragment>
-                            ))}
-                        </tbody>
-                    </table>
-                </form>
                 <h2>Add a New Product</h2>
                 <form onSubmit={handleAddFormSubmit}>
                     <input
@@ -234,6 +198,40 @@ const HomePage = () => {
                         onChange={handleAddFormChange}
                     />
                     <button type="submit">Add</button>
+                </form>
+                <h2>List of Products. Total Products: {productData.length}</h2>
+                <form onSubmit={handleEditFormSubmit}>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Product Owner</th>
+                                <th>Developers</th>
+                                <th>Scrum Master</th>
+                                <th>Start Date</th>
+                                <th>Methodology</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {productData.map((val) => (
+                                <Fragment>
+                                    {editProductId === val.productId ? (
+                                        <EditRow
+                                            editFormData={editFormData}
+                                            handleEditFormChange={handleEditFormChange}
+                                        />
+                                    ) : (
+                                        <ReadOnlyRow
+                                            val={val}
+                                            handleEditClick={handleEditClick}
+                                            handleDeleteClick={handleDeleteClick}
+                                        />
+                                    )}
+                                </Fragment>
+                            ))}
+                        </tbody>
+                    </table>
                 </form>
             </div>
         </>

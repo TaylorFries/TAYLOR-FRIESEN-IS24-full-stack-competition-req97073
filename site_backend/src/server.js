@@ -23,8 +23,6 @@ app.get('/', (req, res) => res.status(200).send({
 
 app.post('/read', async (req, res, next) => {
     const resJson = JSON.stringify(data);
-    console.log("*************************************")
-    WriteTextToFileAsync(resJson);
     res.json(resJson);
 });
 
@@ -36,9 +34,9 @@ const WriteTextToFileAsync = async (toWrite) => {
             console.log('write done');
         }
     });
-}
+};
 
-app.post('/write', async (req, res, next) => {
+app.post('/update', async (req, res, next) => {
     const reqContent = JSON.stringify(req.body);
     await WriteTextToFileAsync(reqContent);
 });
@@ -47,7 +45,7 @@ const requestListener = (req, res) => {
     res.setHeader("Content-type", "application/json");
     res.writeHead(200);
     res.end(JSON.stringify(data, null, 3));
-}
+};
 
 //404 route - used when page or api call is not defined
 app.use((req, res, next) => res.status(404).send({
