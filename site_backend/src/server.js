@@ -21,6 +21,31 @@ app.get('/', (req, res) => res.status(200).send({
     message: "Server is running"
 }));
 
+function findProduct(productIdFind) {
+    data.forEach(product => {
+        if (product.productId === productIdFind){
+            console.log(type(product));
+            return product;
+        }
+        return null;
+    })
+}
+console.log(JSON.stringify(findProduct("1")));
+
+app.get('/api/product/:productId', (req, res) => {
+    
+    const toFind = req.params.productId;
+    const product = findProduct(toFind);
+    if (product == null){
+        res.status(404);
+        res.send(`Product with id: ${toFind} not found.`);
+        res.end();
+    };
+    res.status(200);
+    res.json(JSON.stringify(product));
+    res.end();
+});
+
 app.post('/read', async (req, res, next) => {
     const resJson = JSON.stringify(data);
     res.json(resJson);

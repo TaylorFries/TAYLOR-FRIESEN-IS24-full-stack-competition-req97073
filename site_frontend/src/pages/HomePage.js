@@ -214,10 +214,10 @@ const HomePage = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {productData.map((val) => (
+                            {productData.map((val, ) => (
                                 <Fragment>
                                     {editProductId === val.productId ? (
-                                        <EditRow
+                                        <EditRow //key={}
                                             editFormData={editFormData}
                                             handleEditFormChange={handleEditFormChange}
                                         />
