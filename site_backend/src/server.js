@@ -22,6 +22,13 @@ app.get('/', (req, res) => res.status(200).send({
     message: "Server is running"
 }));
 
+app.get('/api/load', (req, res) => {
+    const resJson = JSON.stringify(data);
+    res.status(200);
+    res.json(resJson);
+    res.end();
+})
+
 //endpoint to manage get requests for specific product Ids
 app.get('/api/product/:productId', (req, res) => {
     //get the product ID in question from parameters sent
@@ -50,7 +57,7 @@ app.get('/api/product/:productId', (req, res) => {
 });
 
 //endpoint to handle delete requests for one product
-app.delete('/api/product/:productId', (req, res) => {
+app.delete('/api/product/:productId', async (req, res) => {
     //get the id we are looking for, set index and switch var
     const toFind = req.params.productId;
     var productMatch = null;
@@ -79,7 +86,7 @@ app.delete('/api/product/:productId', (req, res) => {
 })
 
 //endpoint to handle additions to the products list
-app.put('/api/product/', async (req, res, next) => {
+app.post('/api/product/', async (req, res, next) => {
     //get the new product ID in
     var productIdIn = req.body.productId;
 
@@ -92,7 +99,7 @@ app.put('/api/product/', async (req, res, next) => {
             if (product.productId == productIdIn){
                 //this might not be the right status code... but it seemed to fit best?
                 res.status(500);
-                res.send('productID clash. Unable to put.');
+                res.send('productID clash. Unable to ost new product.');
                 res.end();
                 clash = true;
                 return;
@@ -116,6 +123,49 @@ app.put('/api/product/', async (req, res, next) => {
     })
     
 })
+
+//endpoint for handling editing of products
+app.put('/api/product/:productId', async (req, res, next) => {
+    //get the product id from endpoint params
+    const toFind = req.params.productId;
+    var productMatch = null;
+    var index = 0;
+    //go through products if we find the ID get the index 
+    fs.readFile('./src/product-content.json', function (err, data) {
+        var json = JSON.parse(data);
+        json.forEach(product => {
+            console.log(toFind);
+            console.log(product.productId);
+            if (product.productId == toFind){
+                productMatch = index;
+            } else {
+                index += 1;
+            }
+        });
+
+        //if we didnt find the match send back 500
+        if(productMatch == null) {
+            res.status(500);
+            res.send("No product with that ID to edit");
+            res.end();
+        } 
+        //if we find the match update the index with new data
+        else {
+            json[productMatch] = req.body;
+            //write new list to file
+            WriteTextToFileAsync(JSON.stringify(json));
+             
+            if (err){
+                res.status(500);
+                res.send('unable to edit product.');
+                res.end();
+            } else{
+                res.status(200);
+                res.end();
+            }
+        }
+    }
+)})
 
 //initial read to load list of products
 //i tried to get this to run at the start of the front end but that was not working

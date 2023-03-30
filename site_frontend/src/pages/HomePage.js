@@ -6,6 +6,8 @@ import ReadOnlyRow from "../components/ReadOnlyRow";
 import EditRow from "../components/EditRow";
 
 const HomePage = () => {
+    const address = "0.0.0.0";
+
     //used to get product data from file
     const [productData, setProducts] = useState([]);
 
@@ -13,7 +15,7 @@ const HomePage = () => {
     const [addFormData, setAddFormData] = useState({
         productName: '',
         productOwnerName: '',
-        Developers: '',
+        Developers: [],
         scrumMasterName: '',
         startDate: '',
         methodology: ''
@@ -23,7 +25,7 @@ const HomePage = () => {
     const [editFormData, setEditFormData] = useState({
         productName: '',
         productOwnerName: '',
-        Developers: '',
+        Developers: [],
         scrumMasterName: '',
         startDate: '',
         methodology: ''
@@ -49,20 +51,6 @@ const HomePage = () => {
         setAddFormData(newFormData);
     };
 
-    //our INIT button. Gets entire json file from server
-    const handleLoadClick = () => {
-        //set up endpoint
-        const url = 'http://localhost:8000/api/read';
-        //this should maybe be a get request but I am a little confused on when to use that 
-        axios.post(url)
-        .then((res) => {
-            //parse the data that was sent back
-            const jsonIn = JSON.parse(res.data);
-            //update state of products
-            setProducts(jsonIn);
-        });
-    };
-
     //used to keep track of changes made in edit form
     const handleEditFormChange = (event) => {
         event.preventDefault();
@@ -82,12 +70,14 @@ const HomePage = () => {
     //used to add a new product to the list in front end and send req to backend
     const handleAddFormSubmit = (event) => {
         event.preventDefault();
+        //sep the list into a list
+        var devList = addFormData.Developers.split(',');
         //define a new product with values in the form field
         const newProduct = {
             productId: nanoid(),
             productName: addFormData.productName,
             productOwnerName: addFormData.productOwnerName,
-            Developers: addFormData.Developers,
+            Developers: devList,
             scrumMasterName: addFormData.scrumMasterName,
             startDate: addFormData.startDate,
             methodology: addFormData.methodology
@@ -104,13 +94,21 @@ const HomePage = () => {
     //used when edits to product are submitted
     const handleEditFormSubmit = (event) => {
         event.preventDefault();
+        //get the list (no change to devs) or string (devs were changed) object 
+        var devList = editFormData.Developers;
+        if (typeof(editFormData.Developers) == 'string'){
+            //if there was a change turn it back into a list
+            devList = editFormData.Developers.split(',');
+        }
 
+        //var devList = editFormData.Developers.split(',');
+        
         //get the form data and make a new product with it
         const editedProduct = {
             productId: editProductId,
             productName: editFormData.productName,
             productOwnerName: editFormData.productOwnerName,
-            Developers: editFormData.Developers,
+            Developers: devList,
             scrumMasterName: editFormData.scrumMasterName,
             startDate: editFormData.startDate,
             methodology: editFormData.methodology
@@ -126,7 +124,7 @@ const HomePage = () => {
         //turn edit row toggle off so we see read only row again
         setEditProductId(null);
         //send request to backend to update "database"
-        updateJson(newProducts);
+        editProduct(editProductId, editedProduct);
     }
 
     //used when "edit" button is selected on readonly row
@@ -180,11 +178,23 @@ const HomePage = () => {
         //set endpoint
         const url = `http://localhost:8000/api/product`;
         //send put request with the new product as the body
-        axios.put(url, product)
+        axios.post(url, product)
         .then(response => {
             //log the status
-            console.log("Status of PUT", response.status);
+            console.log("Status of POST", response.status);
         });
+    };
+
+    //handle editing of product based on ID
+    const editProduct = (productId, product) => {
+        //set endpoint
+        const url = `http://localhost:8000/api/product/${productId}`;
+        //send put request with product id 
+        axios.put(url, product)
+          .then(response => {
+              console.log("Status of PUT: ", response.status);
+          })
+
     };
 
     //"catch all" as I fill out the endpoints this will be used less. 
@@ -199,10 +209,20 @@ const HomePage = () => {
         });
     };
 
+    useEffect(() => {
+        const url = 'http://localhost:8000/api/load';
+        axios.get(url)
+          .then(response => {
+                //parse the data that was sent back
+                const jsonIn = JSON.parse(response.data);
+                //update state of products
+                setProducts(jsonIn);
+          })
+    }, []);
+
     //rendering functions
     return (
         <>
-        <button onClick={() => handleLoadClick()}>Load Products</button>
             <div className="App">
                 <h2>Add a New Product</h2>
                 <form onSubmit={handleAddFormSubmit}>
@@ -265,15 +285,17 @@ const HomePage = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {productData.map((val, ) => (
+                            {productData.map((val ) => (
                                 <Fragment>
                                     {editProductId === val.productId ? (
-                                        <EditRow //key={}
+                                        <EditRow 
+                                            key={val.productId}
                                             editFormData={editFormData}
                                             handleEditFormChange={handleEditFormChange}
                                         />
                                     ) : (
                                         <ReadOnlyRow
+                                            key={val.productId}
                                             val={val}
                                             handleEditClick={handleEditClick}
                                             handleDeleteClick={handleDeleteClick}

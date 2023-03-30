@@ -4,11 +4,18 @@ import React from 'react';
 // for our product
 
 const ReadOnlyRow = ({ val, handleEditClick, handleDeleteClick}) => {
+    var devs = val.Developers;
     return(
         <tr>
             <td>{val.productName}</td>
             <td>{val.productOwnerName}</td>
-            <td>{val.Developers}</td>
+            <td>
+                <ul>
+                    {devs.map(function(name, i){
+                        return <li key={i}>{name}</li>
+                    })}
+                </ul>
+            </td>
             <td>{val.scrumMasterName}</td>
             <td>{val.startDate}</td>
             <td>{val.methodology}</td>
