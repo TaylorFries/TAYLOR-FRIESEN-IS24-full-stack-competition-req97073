@@ -18,24 +18,30 @@ app.use(cors());
 
 //default route for our server
 app.get('/', (req, res) => res.status(200).send({
+    //send basic response 
     message: "Server is running"
 }));
 
-
+//endpoint to manage get requests for specific product Ids
 app.get('/api/product/:productId', (req, res) => {
-    
+    //get the product ID in question from parameters sent
     const toFind = req.params.productId;
+    //using this as a switch if we find the ID we are looking for
     let productMatch = null;
+    //go through each product in the json file 
     data.forEach(product => {
+        //if we match the id we are looking for update productMatch
         if (product.productId === toFind){
             productMatch = product;
         };
     });
+    //if we didnt find the id send fof status and message
     if (productMatch == null){
         res.status(404);
         res.send(`Product with id: ${toFind} not found.`);
         res.end();
-    } else {
+    } // if we did find the id send back the entire element
+    else {
         res.status(200);
         res.json(productMatch);
         res.end();
@@ -43,10 +49,13 @@ app.get('/api/product/:productId', (req, res) => {
     
 });
 
+//endpoint to handle delete requests for one product
 app.delete('/api/product/:productId', (req, res) => {
+    //get the id we are looking for, set index and switch var
     const toFind = req.params.productId;
     var productMatch = null;
     var index = 0
+    //go through products if we find the ID get the index 
     data.forEach(product => {
         if (product.productId == toFind){
             productMatch = index;
@@ -54,11 +63,14 @@ app.delete('/api/product/:productId', (req, res) => {
             index += 1;
         }
     });
+    //if we didnt find the ID send back fof and message
     if (productMatch == null) {
         res.status(404);
         res.send(`Product with id: ${toFind} not found.`);
         res.end();
-    } else {
+    } //if we found the ID splice that index out and rewrite file 
+      //then send back 200 OK 
+    else {
         data.splice(productMatch, 1);
         WriteTextToFileAsync(JSON.stringify(data));
         res.status(200);
@@ -66,23 +78,31 @@ app.delete('/api/product/:productId', (req, res) => {
     }
 })
 
+//endpoint to handle additions to the products list
 app.put('/api/product/', async (req, res, next) => {
+    //get the new product ID in
     var productIdIn = req.body.productId;
+
     fs.readFile('./src/product-content.json', function (err, data) {
+        //get the data in from the json file set up switch var
         var json = JSON.parse(data);
         var clash = false;
+        //go through each product if we hit the ID send back error message and flip switch
         json.forEach(product => {
             if (product.productId == productIdIn){
+                //this might not be the right status code... but it seemed to fit best?
                 res.status(500);
                 res.send('productID clash. Unable to put.');
                 res.end();
                 clash = true;
                 return;
             }
-        })
+        })//if we didnt find that product id add the new data to the json string
         if (!clash){
             json.push(req.body);
+            //update json file to new list
             WriteTextToFileAsync(JSON.stringify(json));
+            //I should probably do more error checking. 
             if (err){
                 res.status(500);
                 res.send('unable to add product.');
@@ -97,11 +117,15 @@ app.put('/api/product/', async (req, res, next) => {
     
 })
 
+//initial read to load list of products
+//i tried to get this to run at the start of the front end but that was not working
+//so now a button triggers it
 app.post('/api/read', async (req, res, next) => {
     const resJson = JSON.stringify(data);
     res.json(resJson);
 });
 
+//write over current json file with new json file
 const WriteTextToFileAsync = async (toWrite) => {
     fs.writeFile('./src/product-content.json', toWrite, (err) => {
         if (err){
@@ -112,6 +136,7 @@ const WriteTextToFileAsync = async (toWrite) => {
     });
 };
 
+//this is to handle all other requests right now, as I flesh out each of the endpoints this will be used less
 app.post('/api/update', async (req, res, next) => {
     const reqContent = JSON.stringify(req.body);
     await WriteTextToFileAsync(reqContent);

@@ -1,5 +1,8 @@
 import React from 'react';
 
+//this component is used when we want to show the row containing data 
+// for our product
+
 const ReadOnlyRow = ({ val, handleEditClick, handleDeleteClick}) => {
     return(
         <tr>

@@ -3,6 +3,9 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import NotFoundPage from './pages/NotFoundPage';
 
+//This is the landing page but currently we just use it to
+//render the home pagethat does all the heave lifting.
+
 function App() {
   return (
     <BrowserRouter>

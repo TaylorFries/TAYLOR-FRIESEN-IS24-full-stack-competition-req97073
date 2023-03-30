@@ -1,5 +1,8 @@
 import React from 'react';
 
+//this component is used when we want to show an editable field in the place of 
+//a row in our table. 
+
 const EditRow = ({ editFormData, handleEditFormChange }) => {
     return (
         <tr>

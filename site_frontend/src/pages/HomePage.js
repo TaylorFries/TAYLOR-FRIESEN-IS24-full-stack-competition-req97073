@@ -49,16 +49,21 @@ const HomePage = () => {
         setAddFormData(newFormData);
     };
 
-
+    //our INIT button. Gets entire json file from server
     const handleLoadClick = () => {
+        //set up endpoint
         const url = 'http://localhost:8000/api/read';
+        //this should maybe be a get request but I am a little confused on when to use that 
         axios.post(url)
         .then((res) => {
+            //parse the data that was sent back
             const jsonIn = JSON.parse(res.data);
+            //update state of products
             setProducts(jsonIn);
         });
     };
 
+    //used to keep track of changes made in edit form
     const handleEditFormChange = (event) => {
         event.preventDefault();
 
@@ -74,8 +79,10 @@ const HomePage = () => {
         setEditFormData(newFormData);
     };
 
+    //used to add a new product to the list in front end and send req to backend
     const handleAddFormSubmit = (event) => {
         event.preventDefault();
+        //define a new product with values in the form field
         const newProduct = {
             productId: nanoid(),
             productName: addFormData.productName,
@@ -86,14 +93,19 @@ const HomePage = () => {
             methodology: addFormData.methodology
         };
 
+        //make a new list with copy of old list and new item at end
         const newProducts = [...productData, newProduct];
+        //update the state
         setProducts(newProducts);
+        //send update to backend to update "database"
         addProduct(newProduct);
     };
 
+    //used when edits to product are submitted
     const handleEditFormSubmit = (event) => {
         event.preventDefault();
 
+        //get the form data and make a new product with it
         const editedProduct = {
             productId: editProductId,
             productName: editFormData.productName,
@@ -103,22 +115,26 @@ const HomePage = () => {
             startDate: editFormData.startDate,
             methodology: editFormData.methodology
         }
-
+        //create copy of current state
         const newProducts = [...productData];
-
+        //get the index of the item to update
         const index = productData.findIndex((product) => product.productId === editProductId)
-
+        //update that item to new product 
         newProducts[index] = editedProduct;
-
+        //update state
         setProducts(newProducts);
+        //turn edit row toggle off so we see read only row again
         setEditProductId(null);
+        //send request to backend to update "database"
         updateJson(newProducts);
     }
 
+    //used when "edit" button is selected on readonly row
     const handleEditClick = (event, product) => {
         event.preventDefault();
+        //get the product ID of the product we want to edit
         setEditProductId(product.productId);
-
+        //get the current values of each of the fields
         const formValues = {
             productName: product.productName,
             productOwnerName: product.productOwnerName,
@@ -127,44 +143,63 @@ const HomePage = () => {
             startDate: product.startDate,
             methodology: product.methodology
         }
-
+        //set state for editing
         setEditFormData(formValues);
     };
 
+    //used to handle "delete" button being pressed
     const handleDeleteClick = (productId) => {
+        //make a copy of the current state
         const newProducts = [...productData];
+        //get the index of the element to be deleted
         const index = productData.findIndex((curProduct) => curProduct.productId === productId);
 
+        //splice out that element
         newProducts.splice(index, 1);
 
+        //set state in place
         setProducts(newProducts);
+        //send request to backend to remove that element from the list
         deleteProduct(productId);
     }
 
+    //called after "delete" button is pressed and handled in FE
     const deleteProduct = (productId) => {
+        //set endpoint
         const url = `http://localhost:8000/api/product/${productId}`;
+        //send delete request to api
         axios.delete(url)
         .then(response => {
+            //print status to console. 
             console.log("Status of DELETE: ", response.status);
         });
     };
 
+    //used when add product button is submitted 
     const addProduct = (product) => {
+        //set endpoint
         const url = `http://localhost:8000/api/product`;
+        //send put request with the new product as the body
         axios.put(url, product)
         .then(response => {
+            //log the status
             console.log("Status of PUT", response.status);
         });
     };
 
+    //"catch all" as I fill out the endpoints this will be used less. 
     const updateJson = (products) => {
+        //set endpoint
         const url = 'http://localhost:8000/api/update';
+        //send post request with the list of products
         axios.post(url, products)
         .then(response => {
+            //log the response
             console.log("This is the response", response);
         });
     };
 
+    //rendering functions
     return (
         <>
         <button onClick={() => handleLoadClick()}>Load Products</button>
