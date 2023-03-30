@@ -21,32 +21,83 @@ app.get('/', (req, res) => res.status(200).send({
     message: "Server is running"
 }));
 
-function findProduct(productIdFind) {
-    data.forEach(product => {
-        if (product.productId === productIdFind){
-            console.log(type(product));
-            return product;
-        }
-        return null;
-    })
-}
-console.log(JSON.stringify(findProduct("1")));
 
 app.get('/api/product/:productId', (req, res) => {
     
     const toFind = req.params.productId;
-    const product = findProduct(toFind);
-    if (product == null){
+    let productMatch = null;
+    data.forEach(product => {
+        if (product.productId === toFind){
+            productMatch = product;
+        };
+    });
+    if (productMatch == null){
         res.status(404);
         res.send(`Product with id: ${toFind} not found.`);
         res.end();
-    };
-    res.status(200);
-    res.json(JSON.stringify(product));
-    res.end();
+    } else {
+        res.status(200);
+        res.json(productMatch);
+        res.end();
+    }
+    
 });
 
-app.post('/read', async (req, res, next) => {
+app.delete('/api/product/:productId', (req, res) => {
+    const toFind = req.params.productId;
+    var productMatch = null;
+    var index = 0
+    data.forEach(product => {
+        if (product.productId == toFind){
+            productMatch = index;
+        } else {
+            index += 1;
+        }
+    });
+    if (productMatch == null) {
+        res.status(404);
+        res.send(`Product with id: ${toFind} not found.`);
+        res.end();
+    } else {
+        data.splice(productMatch, 1);
+        WriteTextToFileAsync(JSON.stringify(data));
+        res.status(200);
+        res.end();
+    }
+})
+
+app.put('/api/product/', async (req, res, next) => {
+    var productIdIn = req.body.productId;
+    fs.readFile('./src/product-content.json', function (err, data) {
+        var json = JSON.parse(data);
+        var clash = false;
+        json.forEach(product => {
+            if (product.productId == productIdIn){
+                res.status(500);
+                res.send('productID clash. Unable to put.');
+                res.end();
+                clash = true;
+                return;
+            }
+        })
+        if (!clash){
+            json.push(req.body);
+            WriteTextToFileAsync(JSON.stringify(json));
+            if (err){
+                res.status(500);
+                res.send('unable to add product.');
+                res.end();
+            } else{
+                res.status(200);
+                res.end();
+            }
+        }
+        
+    })
+    
+})
+
+app.post('/api/read', async (req, res, next) => {
     const resJson = JSON.stringify(data);
     res.json(resJson);
 });
@@ -61,16 +112,11 @@ const WriteTextToFileAsync = async (toWrite) => {
     });
 };
 
-app.post('/update', async (req, res, next) => {
+app.post('/api/update', async (req, res, next) => {
     const reqContent = JSON.stringify(req.body);
     await WriteTextToFileAsync(reqContent);
 });
 
-const requestListener = (req, res) => {
-    res.setHeader("Content-type", "application/json");
-    res.writeHead(200);
-    res.end(JSON.stringify(data, null, 3));
-};
 
 //404 route - used when page or api call is not defined
 app.use((req, res, next) => res.status(404).send({

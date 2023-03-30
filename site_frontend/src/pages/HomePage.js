@@ -51,7 +51,7 @@ const HomePage = () => {
 
 
     const handleLoadClick = () => {
-        const url = 'http://localhost:8000/read';
+        const url = 'http://localhost:8000/api/read';
         axios.post(url)
         .then((res) => {
             const jsonIn = JSON.parse(res.data);
@@ -88,7 +88,7 @@ const HomePage = () => {
 
         const newProducts = [...productData, newProduct];
         setProducts(newProducts);
-        updateJson(newProducts);
+        addProduct(newProduct);
     };
 
     const handleEditFormSubmit = (event) => {
@@ -138,11 +138,27 @@ const HomePage = () => {
         newProducts.splice(index, 1);
 
         setProducts(newProducts);
-        updateJson(newProducts);
+        deleteProduct(productId);
     }
 
+    const deleteProduct = (productId) => {
+        const url = `http://localhost:8000/api/product/${productId}`;
+        axios.delete(url)
+        .then(response => {
+            console.log("Status of DELETE: ", response.status);
+        });
+    };
+
+    const addProduct = (product) => {
+        const url = `http://localhost:8000/api/product`;
+        axios.put(url, product)
+        .then(response => {
+            console.log("Status of PUT", response.status);
+        });
+    };
+
     const updateJson = (products) => {
-        const url = 'http://localhost:8000/update';
+        const url = 'http://localhost:8000/api/update';
         axios.post(url, products)
         .then(response => {
             console.log("This is the response", response);
