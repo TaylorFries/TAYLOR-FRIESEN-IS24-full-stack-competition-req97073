@@ -8,7 +8,7 @@ import morgan from 'morgan';
 //define our app using express
 const app = express();
 const port = 8000;
-const host = 'localhost';
+const host = '0.0.0.0';
 
 //MAYBE WANT TO REMOVE MORGAN BEFORE SUBMITTING?
 //"middleware" used to help with developing this monster
@@ -89,7 +89,7 @@ app.delete('/api/product/:productId', async (req, res) => {
 app.post('/api/product/', async (req, res, next) => {
     //get the new product ID in
     var productIdIn = req.body.productId;
-
+    
     fs.readFile('./src/product-content.json', function (err, data) {
         //get the data in from the json file set up switch var
         var json = JSON.parse(data);
@@ -134,8 +134,6 @@ app.put('/api/product/:productId', async (req, res, next) => {
     fs.readFile('./src/product-content.json', function (err, data) {
         var json = JSON.parse(data);
         json.forEach(product => {
-            console.log(toFind);
-            console.log(product.productId);
             if (product.productId == toFind){
                 productMatch = index;
             } else {

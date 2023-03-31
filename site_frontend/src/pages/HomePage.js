@@ -6,7 +6,7 @@ import ReadOnlyRow from "../components/ReadOnlyRow";
 import EditRow from "../components/EditRow";
 
 const HomePage = () => {
-    const address = "0.0.0.0";
+    const sendTo = 8000;
 
     //used to get product data from file
     const [productData, setProducts] = useState([]);
@@ -68,7 +68,7 @@ const HomePage = () => {
     };
 
     //used to add a new product to the list in front end and send req to backend
-    const handleAddFormSubmit = (event) => {
+    const handleAddFormSubmit = async (event) => {
         event.preventDefault();
         //sep the list into a list
         var devList = addFormData.Developers.split(',');
@@ -85,14 +85,22 @@ const HomePage = () => {
 
         //make a new list with copy of old list and new item at end
         const newProducts = [...productData, newProduct];
-        //update the state
-        setProducts(newProducts);
+        
         //send update to backend to update "database"
-        addProduct(newProduct);
+        //set endpoint
+        const url = `http://localhost:${sendTo}/api/product`;
+        //send put request with the new product as the body
+        let result = await axios.post(url, newProduct);
+
+        if (result.status == 200){
+            //update the state
+            setProducts(newProducts);
+        }
+        
     };
 
     //used when edits to product are submitted
-    const handleEditFormSubmit = (event) => {
+    const handleEditFormSubmit = async (event) => {
         event.preventDefault();
         //get the list (no change to devs) or string (devs were changed) object 
         var devList = editFormData.Developers;
@@ -119,12 +127,21 @@ const HomePage = () => {
         const index = productData.findIndex((product) => product.productId === editProductId)
         //update that item to new product 
         newProducts[index] = editedProduct;
-        //update state
-        setProducts(newProducts);
-        //turn edit row toggle off so we see read only row again
-        setEditProductId(null);
+        
         //send request to backend to update "database"
-        editProduct(editProductId, editedProduct);
+        //set endpoint
+        const url = `http://localhost:${sendTo}/api/product/${editProductId}`;
+
+        //send put request with product id 
+        let statusRes = await axios.put(url, editedProduct);
+        
+        //if we get a good response back make the changes
+        if(statusRes.status == 200){
+            //update state
+            setProducts(newProducts);
+            //turn edit row toggle off so we see read only row again
+            setEditProductId(null);
+        }
     }
 
     //used when "edit" button is selected on readonly row
@@ -146,7 +163,7 @@ const HomePage = () => {
     };
 
     //used to handle "delete" button being pressed
-    const handleDeleteClick = (productId) => {
+    const handleDeleteClick = async (productId) => {
         //make a copy of the current state
         const newProducts = [...productData];
         //get the index of the element to be deleted
@@ -155,68 +172,44 @@ const HomePage = () => {
         //splice out that element
         newProducts.splice(index, 1);
 
-        //set state in place
-        setProducts(newProducts);
         //send request to backend to remove that element from the list
-        deleteProduct(productId);
-    }
-
-    //called after "delete" button is pressed and handled in FE
-    const deleteProduct = (productId) => {
+        //var result = deleteProduct(productId);
         //set endpoint
-        const url = `http://localhost:8000/api/product/${productId}`;
+        const url = `http://localhost:${sendTo}/api/product/${productId}`;
         //send delete request to api
-        axios.delete(url)
-        .then(response => {
-            //print status to console. 
-            console.log("Status of DELETE: ", response.status);
-        });
-    };
+        let result = await axios.delete(url);
+        
+        //if we get the result we want set new state
+        if (result.status == 200){
+            //set state in place
+            setProducts(newProducts);
+        }
+        
+    }
 
     //used when add product button is submitted 
     const addProduct = (product) => {
         //set endpoint
-        const url = `http://localhost:8000/api/product`;
+        const url = `http://localhost:${sendTo}/api/product`;
         //send put request with the new product as the body
         axios.post(url, product)
         .then(response => {
-            //log the status
-            console.log("Status of POST", response.status);
+            //send the status back to the function
+            return(response.status);
         });
     };
 
-    //handle editing of product based on ID
-    const editProduct = (productId, product) => {
-        //set endpoint
-        const url = `http://localhost:8000/api/product/${productId}`;
-        //send put request with product id 
-        axios.put(url, product)
-          .then(response => {
-              console.log("Status of PUT: ", response.status);
-          })
-
-    };
-
-    //"catch all" as I fill out the endpoints this will be used less. 
-    const updateJson = (products) => {
-        //set endpoint
-        const url = 'http://localhost:8000/api/update';
-        //send post request with the list of products
-        axios.post(url, products)
-        .then(response => {
-            //log the response
-            console.log("This is the response", response);
-        });
-    };
 
     useEffect(() => {
-        const url = 'http://localhost:8000/api/load';
+        const url = `http://localhost:${sendTo}/api/load`;
         axios.get(url)
           .then(response => {
-                //parse the data that was sent back
-                const jsonIn = JSON.parse(response.data);
-                //update state of products
-                setProducts(jsonIn);
+              if(response.status === 200){
+                  //parse the data that was sent back
+                    const jsonIn = JSON.parse(response.data);
+                    //update state of products
+                    setProducts(jsonIn);
+              }
           })
     }, []);
 
@@ -225,6 +218,7 @@ const HomePage = () => {
         <>
             <div className="App">
                 <h2>Add a New Product</h2>
+                <p>Please note new products are added to the bottom of the list</p>
                 <form onSubmit={handleAddFormSubmit}>
                     <input
                         type="text"
