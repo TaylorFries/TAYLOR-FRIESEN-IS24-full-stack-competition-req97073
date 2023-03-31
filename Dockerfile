@@ -28,4 +28,5 @@ EXPOSE 8000
 
 # Change working directory and run the front and back end
 WORKDIR /repo
+RUN ["chmod", "+x", "./run_server.sh"]
 CMD ./run_server.sh
