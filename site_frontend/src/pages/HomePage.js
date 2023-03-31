@@ -92,7 +92,7 @@ const HomePage = () => {
         //send put request with the new product as the body
         let result = await axios.post(url, newProduct);
 
-        if (result.status == 200){
+        if (result.status === 200){
             //update the state
             setProducts(newProducts);
         }
@@ -136,7 +136,7 @@ const HomePage = () => {
         let statusRes = await axios.put(url, editedProduct);
         
         //if we get a good response back make the changes
-        if(statusRes.status == 200){
+        if(statusRes.status === 200){
             //update state
             setProducts(newProducts);
             //turn edit row toggle off so we see read only row again
@@ -180,7 +180,7 @@ const HomePage = () => {
         let result = await axios.delete(url);
         
         //if we get the result we want set new state
-        if (result.status == 200){
+        if (result.status === 200){
             //set state in place
             setProducts(newProducts);
         }
