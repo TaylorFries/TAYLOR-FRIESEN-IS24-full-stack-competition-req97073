@@ -23,10 +23,15 @@ app.get('/', (req, res) => res.status(200).send({
 }));
 
 app.get('/api/load', (req, res) => {
-    const resJson = JSON.stringify(data);
-    res.status(200);
-    res.json(resJson);
-    res.end();
+    fs.readFile('./src/product-content.json', function (err, dataIn){
+        //get the data in from the json file set up switch var
+        var json = JSON.parse(dataIn);  
+        const resJson = JSON.stringify(json);
+        res.status(200);
+        res.json(resJson);
+        res.end();
+    })
+    
 })
 
 //endpoint to manage get requests for specific product Ids
@@ -99,7 +104,7 @@ app.post('/api/product/', async (req, res, next) => {
             if (product.productId == productIdIn){
                 //this might not be the right status code... but it seemed to fit best?
                 res.status(500);
-                res.send('productID clash. Unable to ost new product.');
+                res.send('productID clash. Unable to post new product.');
                 res.end();
                 clash = true;
                 return;
