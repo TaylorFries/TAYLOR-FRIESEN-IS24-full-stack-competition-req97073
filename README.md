@@ -74,7 +74,3 @@ This script is only called when running in Docker. I have provided a sample of w
 
 ### Actual Fun Note
 I have a cat named Ringo Starr and he has also helped a lot in the building of this app. 
-
-### less fun note
-I was really hoping to do better at this challenge. I believe I got a lot of the elements working that you were looking for but in the last moment I found a fun error I dont know how to fix. I was also planning on doing all the bonus material but I simply ran out of time. 
-Thank you for the oppertunity and please enjoy a decent submission. 
