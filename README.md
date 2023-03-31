@@ -4,29 +4,7 @@
 
 Welcome. This repo sets up a web app and a server. The web app makes calls to the server and the server responds. It is very nice. 
 
-## To Run
-
-### With Docker
-Please have Docker installed and the desktop app running. 
-Then in the command line interface of your choosing navigate to the main git folder (TAYLOR-FRIESEN-IS24-full-stack-competition-req97073).
-In your command line paste the following command: 
-
-```docker build . -t web_app```
-
-Wait for it to finish. It may take awhile. There is a lot for it to do. 
-
-Then in your terminal paste this command:
-
-```docker run -p 3000:3000 -p 8000:8000 -d -t web_app```
-
-Wait for it to finish. 
-
-Once it is done open your desktop Docker app and navigate to containers. 
-On the row with the image name matching "web_app" select "Show all ports." 
-Then select both the 3000:3000 (frontend) and 8000:8000 (backend) option. 
-In the browser windows that open localhost:3000 will display the web app with all the products listed. In localhost:8000 you will see a standard message. 
-
-Now the web app has started and you can test its features. 
+## To Run 
 
 ### Without Docker
 I hit some speed bumps with Docker so I am going to give the steps for running this on any computer without Docker. 
@@ -59,6 +37,32 @@ Run the following command:
 
 Once both the frontend and backend are running please start your tests! 
 
+
+### With Docker
+#### PLEASE NOTE 
+There is an error where on reload the server is sending back 304 (no changes) even after the file has been updated. This means outdated information will show on reload. 
+For this reason I am suggesting to not use docker to run my app. 
+
+Please have Docker installed and the desktop app running. 
+Then in the command line interface of your choosing navigate to the main git folder (TAYLOR-FRIESEN-IS24-full-stack-competition-req97073).
+In your command line paste the following command: 
+
+```docker build . -t web_app```
+
+Wait for it to finish. It may take awhile. There is a lot for it to do. 
+
+Then in your terminal paste this command:
+
+```docker run -p 3000:3000 -p 8000:8000 -d -t web_app```
+
+Wait for it to finish. 
+
+Once it is done open your desktop Docker app and navigate to containers. 
+On the row with the image name matching "web_app" select "Show all ports." 
+Then select both the 3000:3000 (frontend) and 8000:8000 (backend) option. 
+In the browser windows that open localhost:3000 will display the web app with all the products listed. In localhost:8000 you will see a standard message. 
+
+Now the web app has started and you can test its features.
 
 ## Fun Facts
 
