@@ -40,10 +40,9 @@ Once both the frontend and backend are running please start your tests!
 
 ### With Docker
 #### PLEASE NOTE 
-There is an error where on reload the server is sending back 304 (no changes) even after the file has been updated. This means outdated information will show on reload. 
-For this reason I am suggesting to not use docker to run my app. 
+I have resolved the not loading correct data on reload. There are still a lot of issues I faced when trying to get this to work with Docker. Therefore I am including these instructions second.  
 
-Please have Docker installed and the desktop app running. 
+Please have Docker installed and the desktop app running. If you are a person who does not use the desktop app some of the following steps may not work for you. 
 Then in the command line interface of your choosing navigate to the main git folder (TAYLOR-FRIESEN-IS24-full-stack-competition-req97073).
 In your command line paste the following command: 
 
