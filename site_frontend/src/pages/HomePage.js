@@ -34,7 +34,7 @@ const HomePage = () => {
     //state for showing regular row or editable row
     const [editProductId, setEditProductId] = useState(null);
 
-    //function to keep track of changes to edit row
+    //function to keep track of changes to add row
     const handleAddFormChange = (event) => {
         event.preventDefault();
         //get the name of the field we changed
@@ -186,18 +186,6 @@ const HomePage = () => {
         }
         
     }
-
-    //used when add product button is submitted 
-    const addProduct = (product) => {
-        //set endpoint
-        const url = `http://localhost:${sendTo}/api/product`;
-        //send put request with the new product as the body
-        axios.post(url, product)
-        .then(response => {
-            //send the status back to the function
-            return(response.status);
-        });
-    };
 
 
     useEffect(() => {
