@@ -1,7 +1,7 @@
 import bodyParser from 'body-parser';
 import express from 'express';
 import fs from 'fs';
-import data from "./product-content.json" assert {type: 'json'};
+//import data from "./product-content.json" assert {type: 'json'};
 import cors from 'cors';
 import morgan from 'morgan';
 
@@ -40,24 +40,27 @@ app.get('/api/product/:productId', (req, res) => {
     const toFind = req.params.productId;
     //using this as a switch if we find the ID we are looking for
     let productMatch = null;
-    //go through each product in the json file 
-    data.forEach(product => {
-        //if we match the id we are looking for update productMatch
-        if (product.productId === toFind){
-            productMatch = product;
-        };
-    });
-    //if we didnt find the id send fof status and message
-    if (productMatch == null){
-        res.status(404);
-        res.send(`Product with id: ${toFind} not found.`);
-        res.end();
-    } // if we did find the id send back the entire element
-    else {
-        res.status(200);
-        res.json(productMatch);
-        res.end();
-    }
+    fs.readFile('./src/product-content.json', function (err, data) {
+        var json = JSON.parse(data);
+        //go through each product in the json file 
+        json.forEach(product => {
+            //if we match the id we are looking for update productMatch
+            if (product.productId === toFind){
+                productMatch = product;
+            };
+        });
+        //if we didnt find the id send fof status and message
+        if (productMatch == null){
+            res.status(404);
+            res.send(`Product with id: ${toFind} not found.`);
+            res.end();
+        } // if we did find the id send back the entire element
+        else {
+            res.status(200);
+            res.json(productMatch);
+            res.end();
+        }
+    })
     
 });
 
@@ -66,28 +69,33 @@ app.delete('/api/product/:productId', async (req, res) => {
     //get the id we are looking for, set index and switch var
     const toFind = req.params.productId;
     var productMatch = null;
-    var index = 0
+    var index = 0;
     //go through products if we find the ID get the index 
-    data.forEach(product => {
-        if (product.productId == toFind){
-            productMatch = index;
-        } else {
-            index += 1;
+    fs.readFile('./src/product-content.json', function (err, data) {
+        var json = JSON.parse(data);
+        json.forEach(product => {
+            if(product.productId == toFind){
+                productMatch = index;
+            } else {
+                index += 1;
+            }
+        })
+        
+        //if we didnt find the ID send back fof and message
+        if (productMatch == null) {
+            res.status(404);
+            res.send(`Product with id: ${toFind} not found.`);
+            res.end();
+        } //if we found the ID splice that index out and rewrite file 
+        //then send back 200 OK 
+        else {
+            json.splice(productMatch, 1);
+            WriteTextToFileAsync(JSON.stringify(json));
+            res.status(200);
+            res.end();
         }
     });
-    //if we didnt find the ID send back fof and message
-    if (productMatch == null) {
-        res.status(404);
-        res.send(`Product with id: ${toFind} not found.`);
-        res.end();
-    } //if we found the ID splice that index out and rewrite file 
-      //then send back 200 OK 
-    else {
-        data.splice(productMatch, 1);
-        WriteTextToFileAsync(JSON.stringify(data));
-        res.status(200);
-        res.end();
-    }
+    
 })
 
 //endpoint to handle additions to the products list
