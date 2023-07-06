@@ -6,8 +6,9 @@ Welcome. This repo sets up a web app and a server. The web app makes calls to th
 
 ## To Run 
 
-### Without Docker
-I hit some speed bumps with Docker so I am going to give the steps for running this on any computer without Docker. 
+I am including three sets of instructions below. The first used command line (teminal) instructions to run the application locally. The second instructions show how to set the app up using Docker and the third option shows how to run using VSCode dev container. 
+
+### Command Line / Terminal 
 Open two windows of a command line interface of your choosing. 
 
 #### In Terminal 1
@@ -40,7 +41,13 @@ Once both the frontend and backend are running please start your tests!
 
 ### With Docker
 #### PLEASE NOTE 
-I have resolved the not loading correct data on reload. There are still a lot of issues I faced when trying to get this to work with Docker. Therefore I am including these instructions second.  
+For this solution to work with Docker on Apple Silicon chip devices the development feature Use Rosetta for x86/amd64 emulation on Apple Silicon must be turned on. 
+To do this:
+1. Open Docker
+2. Go into Settings
+3. Open the Features in Development tab
+4. Check the Use Rosetta for x86/amd64 emulation on Apple Silicon option. 
+- if you do not see this option you may need to update Docker (as of July 6th 2023 Docker v4.20 uses this)
 
 Please have Docker installed and the desktop app running. If you are a person who does not use the desktop app some of the following steps may not work for you. 
 Then in the command line interface of your choosing navigate to the main git folder (TAYLOR-FRIESEN-IS24-full-stack-competition-req97073).
@@ -62,6 +69,28 @@ Then select both the 3000:3000 (frontend) and 8000:8000 (backend) option.
 In the browser windows that open localhost:3000 will display the web app with all the products listed. In localhost:8000 you will see a standard message. 
 
 Now the web app has started and you can test its features.
+
+### With VSCode Container
+#### PLEASE NOTE 
+For this solution to work with Docker on Apple Silicon chip devices the development feature Use Rosetta for x86/amd64 emulation on Apple Silicon must be turned on. 
+To do this:
+1. Open Docker
+2. Go into Settings
+3. Open the Features in Development tab
+4. Check the Use Rosetta for x86/amd64 emulation on Apple Silicon option. 
+- if you do not see this option you may need to update Docker (as of July 6th 2023 Docker v4.20 uses this)
+
+Please have Docker installed and the desktop app running.
+
+Open VSCode and open the folder with this solution. 
+If you have the extension Dev Containers by Microsoft there will be a notification on the bottom right of the screen that pops up and offers to rebuild and open the container. Fi you select that you can skip the following steps. 
+
+If you do not have the extension Dev Containers by Microsoft follow these steps:
+1. Install the extension Dev Containers by Microsoft
+2. Open the command palette
+3. Select or type in "Rebuild and open in Container"
+
+Wait for the process to load. Then you will be able to open localhost:3000 in a browser to see the applicaiton. 
 
 ## Fun Facts
 
