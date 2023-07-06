@@ -5,6 +5,11 @@ site_backend/node_modules
 /.pnp
 .pnp.js
 site_frontend/node_modules
+
+#temp files that dont need to be tracked
+site_backend/src/product-content.json
+site_backend/test.json
+
 # testing
 /coverage
 
