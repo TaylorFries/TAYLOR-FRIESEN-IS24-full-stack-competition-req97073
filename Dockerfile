@@ -9,7 +9,7 @@ RUN apk add bash
 RUN apk add python3
 
 # Create new directory and copy files into it
-CMD mkdir repo
+RUN mkdir repo
 COPY site_backend /repo/site_backend
 COPY site_frontend /repo/site_frontend
 COPY run_server.sh /repo/run_server.sh
