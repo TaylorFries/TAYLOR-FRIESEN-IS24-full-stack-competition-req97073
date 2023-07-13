@@ -2,15 +2,15 @@
 FROM alpine:latest
 
 # Update and add all necessary installs
-RUN apk update
-RUN apk add npm
-RUN apk add git
-RUN apk add bash
-RUN apk add python3
+RUN apk update \
+&& apk add npm \
+&& apk add git \
+&& apk add bash \
+&& apk add python3
 
 # Create new directory and copy files into it
 RUN mkdir repo
-COPY site_backend /repo/site_backend
+COPY site_backend /repo/site_backend 
 COPY site_frontend /repo/site_frontend
 COPY run_server.sh /repo/run_server.sh
 
